@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Notifications" />
+  <title>Notification Widget</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .notification-widget {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    .bell {
+      font-size: 30px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .bell::after {
+      content: '';
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 10px;
+      height: 10px;
+      background: red;
+      border-radius: 50%;
+      display: none;
+    }
+
+    .bell.has-new::after {
+      display: block;
+    }
+
+    .notification-panel {
+      display: none;
+      position: absolute;
+      top: 40px;
+      right: 0;
+      width: 250px;
+      background: #fff;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+    }
+
+    .notification-panel h4 {
+      margin-top: 0;
+    }
+
+    .notification-panel ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .notification-panel li {
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+  <div class="notification-widget">
+    <div class="bell" id="bell">&#128276;</div>
+    <div class="notification-panel" id="notificationPanel">
+      <h4>Notifications</h4>
+      <ul id="notificationList"></ul>
+    </div>
+  </div>
+
+  <script>
+    const bell = document.getElementById('bell');
+    const panel = document.getElementById('notificationPanel');
+    const list = document.getElementById('notificationList');
+
+    bell.addEventListener('click', () => {
+      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+      bell.classList.remove('has-new');
+    });
+
+    async function fetchNotifications() {
+      return [
+        { message: "🔔 New message from Sarah" },
+        { message: "📢 Site update released" },
+        { message: "⚠️ Battery level is low" }
+      ];
+    }
+
+    async function updateNotifications() {
+      const notifications = await fetchNotifications();
+      list.innerHTML = '';
+      notifications.forEach(n => {
+        const item = document.createElement('li');
+        item.textContent = n.message;
+        list.appendChild(item);
+      });
+
+      if (notifications.length > 0) {
+        bell.classList.add('has-new');
+      }
+    }
+
+    updateNotifications();
+    setInterval(updateNotifications, 15000);
+  </script>
+</body>
+</html>
