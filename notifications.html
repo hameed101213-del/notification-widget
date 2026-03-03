@@ -25,6 +25,7 @@
       font-size: 30px;
       cursor: pointer;
       position: relative;
+      display: inline-block;
     }
 
     .bell::after {
@@ -41,6 +42,28 @@
 
     .bell.has-new::after {
       display: block;
+    }
+
+    .count-status {
+      position: absolute;
+      top: -10px;
+      right: -12px;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: #bd362f;
+      color: #fff;
+      font-size: 11px;
+      line-height: 18px;
+      text-align: center;
+      font-weight: bold;
+      display: none;
+      padding: 0 4px;
+      box-sizing: border-box;
+    }
+
+    .count-status.has-count {
+      display: inline-block;
     }
 
     .notification-panel {
@@ -75,7 +98,10 @@
 </head>
 <body>
   <div class="notification-widget">
-    <div class="bell" id="bell">&#128276;</div>
+    <div class="bell" id="bell">
+      &#128276;
+      <span class="count-status" id="countStatus">0</span>
+    </div>
     <div class="notification-panel" id="notificationPanel">
       <h4>Notifications</h4>
       <ul id="notificationList"></ul>
@@ -86,10 +112,12 @@
     const bell = document.getElementById('bell');
     const panel = document.getElementById('notificationPanel');
     const list = document.getElementById('notificationList');
+    const countStatus = document.getElementById('countStatus');
 
     bell.addEventListener('click', () => {
       panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
       bell.classList.remove('has-new');
+      countStatus.classList.remove('has-count');
     });
 
     async function fetchNotifications() {
@@ -111,6 +139,11 @@
 
       if (notifications.length > 0) {
         bell.classList.add('has-new');
+        countStatus.textContent = notifications.length;
+        countStatus.classList.add('has-count');
+      } else {
+        countStatus.textContent = '0';
+        countStatus.classList.remove('has-count');
       }
     }
 
