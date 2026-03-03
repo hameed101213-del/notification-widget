@@ -15,107 +15,96 @@
     }
 
     .notification-widget {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 1000;
+      width: min(92vw, 340px);
+      margin: 16px auto;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+      background: #ffffff;
+      overflow: hidden;
     }
 
-    .bell {
-      font-size: 30px;
-      cursor: pointer;
-      position: relative;
+    .widget-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: #111827;
+      color: #ffffff;
     }
 
-    .bell::after {
-      content: '';
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      width: 10px;
-      height: 10px;
-      background: red;
-      border-radius: 50%;
-      display: none;
-    }
-
-    .bell.has-new::after {
-      display: block;
-    }
-
-    .notification-panel {
-      display: none;
-      position: absolute;
-      top: 40px;
-      right: 0;
-      width: 250px;
-      background: #fff;
-      border: 1px solid #ccc;
-      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-      padding: 10px;
-    }
-
-    .notification-panel h4 {
-      margin-top: 0;
-    }
-
-    .notification-panel ul {
-      list-style: none;
-      padding: 0;
+    .widget-header h4 {
       margin: 0;
-      max-height: 200px;
-      overflow-y: auto;
+      font-size: 15px;
+      font-weight: 600;
     }
 
-    .notification-panel li {
-      padding: 5px 0;
-      border-bottom: 1px solid #eee;
+    .widget-status {
+      font-size: 12px;
+      opacity: 0.85;
+    }
+
+    .message-card {
+      padding: 16px 14px;
+    }
+
+    .message-label {
+      margin: 0 0 8px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: #6b7280;
+      text-transform: uppercase;
+    }
+
+    .message-text {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.4;
+      color: #111827;
+    }
+
+    .message-time {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #6b7280;
     }
   </style>
 </head>
 <body>
   <div class="notification-widget">
-    <div class="bell" id="bell">&#128276;</div>
-    <div class="notification-panel" id="notificationPanel">
-      <h4>Notifications</h4>
-      <ul id="notificationList"></ul>
+    <div class="widget-header">
+      <h4>Chat Widget</h4>
+      <span class="widget-status" id="widgetStatus">Loading...</span>
+    </div>
+    <div class="message-card">
+      <p class="message-label">Specific chatbot message</p>
+      <p class="message-text" id="chatMessage"></p>
+      <div class="message-time" id="messageTime"></div>
     </div>
   </div>
 
   <script>
-    const bell = document.getElementById('bell');
-    const panel = document.getElementById('notificationPanel');
-    const list = document.getElementById('notificationList');
+    const chatMessage = document.getElementById('chatMessage');
+    const messageTime = document.getElementById('messageTime');
+    const widgetStatus = document.getElementById('widgetStatus');
 
-    bell.addEventListener('click', () => {
-      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-      bell.classList.remove('has-new');
-    });
-
-    async function fetchNotifications() {
-      return [
-        { message: "🔔 New message from Sarah" },
-        { message: "📢 Site update released" },
-        { message: "⚠️ Battery level is low" }
-      ];
+    async function fetchSpecificChatMessage() {
+      return {
+        message: "🤖 Remember to drink water and take a short break.",
+        updatedAt: new Date()
+      };
     }
 
-    async function updateNotifications() {
-      const notifications = await fetchNotifications();
-      list.innerHTML = '';
-      notifications.forEach(n => {
-        const item = document.createElement('li');
-        item.textContent = n.message;
-        list.appendChild(item);
-      });
-
-      if (notifications.length > 0) {
-        bell.classList.add('has-new');
-      }
+    async function updateWidget() {
+      const data = await fetchSpecificChatMessage();
+      chatMessage.textContent = data.message;
+      messageTime.textContent = `Updated: ${data.updatedAt.toLocaleTimeString()}`;
+      widgetStatus.textContent = 'Live';
     }
 
-    updateNotifications();
-    setInterval(updateNotifications, 15000);
+    updateWidget();
+    setInterval(updateWidget, 15000);
   </script>
 </body>
 </html>
