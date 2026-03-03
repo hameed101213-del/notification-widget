@@ -1,2 +1,2 @@
 # notification-widget
-Bell Widget for Home Screen
+Home screen chat widget that shows one specific chatbot message.
