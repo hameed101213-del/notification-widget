@@ -89,10 +89,20 @@
     const messageTime = document.getElementById('messageTime');
     const widgetStatus = document.getElementById('widgetStatus');
 
-    const skipPatterns = [
+    const defaultSkipPatterns = [
       'https://www.axa-gulf.com/en',
       'aegov-file-uploaded'
     ];
+
+    // Optional runtime override:
+    // window.NOTIFICATION_WIDGET_SKIP_PATTERNS = ['pattern-a', 'pattern-b'];
+    const configuredSkipPatterns = Array.isArray(window.NOTIFICATION_WIDGET_SKIP_PATTERNS)
+      ? window.NOTIFICATION_WIDGET_SKIP_PATTERNS
+      : defaultSkipPatterns;
+
+    const skipPatterns = configuredSkipPatterns
+      .map((pattern) => String(pattern || '').toLowerCase())
+      .filter(Boolean);
 
     function shouldSkipMessage(rawMessage) {
       const normalized = String(rawMessage || '').toLowerCase();
@@ -110,6 +120,7 @@
       const data = await fetchSpecificChatMessage();
 
       if (shouldSkipMessage(data.message)) {
+        chatMessage.textContent = 'Filtered noisy message.';
         widgetStatus.textContent = 'Filtered';
         messageTime.textContent = `Updated: ${new Date().toLocaleTimeString()} (noisy message skipped)`;
         return;
